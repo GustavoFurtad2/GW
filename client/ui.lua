@@ -55,13 +55,14 @@ function userInterface(x, y)
         function text:draw()
 
             setFontSize(self.size)
+            love.graphics.setColor(self.color[1], self.color[2], self.color[3])
             love.graphics.print(self.text, self.x, self.y)
         end
 
         return text
     end
 
-    function userInterface:addButton(text, posX, posY, length, height, size, color, action)
+    function userInterface:addButton(text, posX, posY, length, height, size, color, border, onClick)
 
         table.insert(self.elements, {
 
@@ -76,13 +77,15 @@ function userInterface(x, y)
 
         table.insert(self.buttons, {
 
+            index = #self.elements,
+
             x = self.x + posX,
             y = self.y + posY,
 
-            length = length,
-            height = height,
+            length  = length,
+            height  = height,
 
-            action = action
+            onClick = onClick,
         })
 
         local button = self.elements[#self.elements]
@@ -95,6 +98,13 @@ function userInterface(x, y)
         function button:draw()
 
             setFontSize(self.size)
+
+            love.graphics.setColor(self.color[1], self.color[2], self.color[3])
+
+            if border then
+                love.graphics.rectangle("line", self.x, self.y, length, height)
+            end
+
             love.graphics.print(self.text, self.x, self.y)
         end
 
@@ -107,7 +117,8 @@ function userInterface(x, y)
 
             if mouseX >= button.x and mouseX <= button.x + button.length and mouseY >= button.y and mouseY <= button.y + button.height then
 
-                button.action()
+                button.onClick(self.elements[button.index])
+                print(self.elements[button.index].text)
             end
         end
     end
