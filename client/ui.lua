@@ -1,136 +1,95 @@
-local fontSizes = {}
-local lastSize
+function Gui(x, y)
 
-local function setFontSize(size)
-
-    if size == lastSize then
-        
-        return
-    end
-
-    if fontSizes[size] then
-
-        love.graphics.setFont(fontSizes[size])
-        lastSize = size
-        return
-    end
-
-    fontSizes[size] = love.graphics.newFont("arial.ttf", size)
-    love.graphics.setFont(fontSizes[size])
-    lastSize = size
-end
-
-function userInterface(x, y)
-
-    local userInterface = {
-
+    local gui = {
         x = x or 0,
         y = y or 0,
 
         buttons  = {},
         elements = {},
-
-        visible  = false
     }
 
-    function userInterface:addText(text, posX, posY, size, color)
+    function gui:textLabel(text, textSize, x, y)
 
         table.insert(self.elements, {
 
-            x = self.x + posX,
-            y = self.y + posY,
+            x = x,
+            y = y,
 
-            text  = text,
-            size  = size,
-            color = color or {1, 1, 1},
+            text = text,
+
+            textSize = textSize
         })
 
-        local text = self.elements[#self.elements]
+        local textLabel = gui.elements[#gui.elements]
 
-        function text:setPos(posX, posY)
+        function textLabel:draw()
 
-            self.x, self.y = x + posX, y + posY
+            setFontSize(self.textSize)
+            love.graphics.print(self.text, gui.x + self.x, gui.y + self.y)
         end
 
-        function text:draw()
-
-            setFontSize(self.size)
-            love.graphics.setColor(self.color[1], self.color[2], self.color[3])
-            love.graphics.print(self.text, self.x, self.y)
-        end
-
-        return text
+        return textLabel
     end
 
-    function userInterface:addButton(text, posX, posY, length, height, size, color, border, onClick)
-
-        table.insert(self.elements, {
-
-            x = self.x + posX,
-            y = self.y + posY,
-
-            text   = text,
-            size   = size,
-            color  = color or {1, 1, 1},
-
-        })
+    function gui:textButton(text, textSize, x, y, w, h, action)
 
         table.insert(self.buttons, {
 
-            index = #self.elements,
+            x = x,
+            y = y,
 
-            x = self.x + posX,
-            y = self.y + posY,
+            w = w,
+            h = h,
+        
+            text = text,
 
-            length  = length,
-            height  = height,
+            action = action,
 
-            onClick = onClick,
+            textSize = textSize
         })
 
-        local button = self.elements[#self.elements]
+        local textButton = gui.buttons[#gui.buttons]
 
-        function button:setPos(posX, posY)
+        function textButton:draw()
 
-            self.x, self.y = x + posX, y + posY
-        end
+            local mouseX, mouseY = love.mouse.getPosition()
 
-        function button:draw()
+            setFontSize(self.textSize)
 
-            setFontSize(self.size)
-
-            love.graphics.setColor(self.color[1], self.color[2], self.color[3])
-
-            if border then
-                love.graphics.rectangle("line", self.x, self.y, length, height)
+            if mouseX >= gui.x + self.x and mouseX <= gui.x + self.x + self.w and mouseY >= gui.y + self.y and mouseY <= gui.y + self.y + self.h then
+                love.graphics.setColor(1, 1, 0)
             end
 
-            love.graphics.print(self.text, self.x, self.y)
+            love.graphics.print(self.text, gui.x + self.x, gui.y + self.y)
+            love.graphics.setColor(1, 1, 1)
         end
 
-        return button
+        return textButton
     end
 
-    function userInterface:update(mouseX, mouseY)
+    function gui:draw()
 
-        for k, button in next, self.buttons do
+        for k, v in next, self.elements do
 
-            if mouseX >= button.x and mouseX <= button.x + button.length and mouseY >= button.y and mouseY <= button.y + button.height then
+            v:draw()
+        end
 
-                button.onClick(self.elements[button.index])
-                print(self.elements[button.index].text)
+        for k, v in next, self.buttons do
+
+            v:draw()
+        end
+    end
+
+    function gui:button(mouseX, mouseY)
+
+        for k, v in next, self.buttons do
+
+            if mouseX >= v.x and mouseX <= v.x + v.w and mouseY >= v.y and mouseY <= v.y + v.h then
+
+                v.action()
             end
         end
     end
 
-
-    function userInterface:draw()
-
-        for k, element in next, self.elements do
-
-            element:draw()
-        end
-    end
-
-    return userInterface
+    return gui
 end
