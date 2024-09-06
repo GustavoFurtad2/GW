@@ -1,77 +1,74 @@
 const net = require("net")
+const rooms = require("./rooms")
 
-function jsonToTable(jsonObj) {
+let users = require("./users")
 
-    let luaTable = "{\n"
-    let indentLevel = 1
+const dataEnums = {
+    "login": 1,
+    "haveDuplicatedUsernames": 2,
+    "sendRoomList": 3,
+}
 
-    for (let key in jsonObj) {
+function sendLoginStatus(socket, data) {
 
-        if (jsonObj.hasOwnProperty(key)) {
+    let username = data[1]
 
-            let value = jsonObj[key]
-            luaTable += "\t".repeat(indentLevel) + `[${JSON.stringify(key)}] = `
-
-            if (typeof value === "object") {
-                luaTable += jsonToTable(JSON.stringify(value, null, "\t")).trim()
-            } 
-            else if (typeof value === "string") {
-                luaTable += `"${value}"`
-            }
-            else {
-                luaTable += value
-            }
-
-            luaTable += ",\n"
-        }
+    if (!users.users[username]) {
+        
+        users.users[username] = new users.User(username)
     }
-
-    luaTable += "\t".repeat(indentLevel - 1) + "}"
-    return luaTable
-}
-
-let users = {}
-
-const getEnum = {
-    "login": 1
-}
-
-const requestEnum = {
-    "duplicatedNames": 1
-}
-
-const server = net.createServer((socket) => {
-    console.log("Client connected")
-
-    socket.on("data", (data) => {
-
-        console.log("received from client: " + data)
-
-        data = JSON.parse(data)
-
-        if (data[0] == getEnum.login) {
-            
-            socket.write(jsonToTable({
-                0: requestEnum.duplicatedNames,
-                1: users[data[2]] == undefined ? 0 : 1,
-                2: data[2]
-            }))
-
-            if (users[data[2]] == undefined) {
-                users[data[2]] = {}
-            }
+    
+    socket.write(`
+        {
+           ${dataEnums.haveDuplicatedUsernames},
+           ${users.users[username] == undefined ? 0 : 1},
         }
-    })
+    `)
+}
 
-    socket.on("end", () => {
-        console.log("Client disconnected")
-    })
+function sendRoomList(socket) {
 
-    socket.on("error", (err) => {
-        console.log(`Error: ${err.message}`)
-    })
-})
+    socket.write(`
+        {
+            ${dataEnums.sendRoomList},
+            ${roomList.getRoomList()}
+        }
+    `)
+}
+
+const server = net.createServer(
+    (socket) => {
+
+        console.log("Client connected")
+
+        socket.on("data", (dataString) => {
+
+            console.log("Data received" + dataString)
+
+            const data = JSON.parse(dataString)
+
+            if (data[0] == dataEnums.login) {
+
+                sendLoginStatus(socket, data)
+            }
+            else if (data[0] == dataEnums.sendRoomList) {
+
+                sendRoomList(socket)
+            }
+        })
+
+        socket.on("end", () => {
+
+            console.log("Client disconnected")
+        })
+
+        socket.on("error", (error) => {
+
+            console.log(`Error: ${error.message}`)
+        })
+    }
+)
 
 server.listen(8081, () => {
-    console.log("Server listening on port 8081")
+    console.log("Server listening")
 })
