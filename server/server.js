@@ -5,25 +5,24 @@ let users = require("./users")
 
 const dataEnums = {
     "login": 1,
-    "haveDuplicatedUsernames": 2,
-    "sendRoomList": 3,
+    "sendRoomList": 2,
 }
 
 function sendLoginStatus(socket, data) {
 
     let username = data[1]
 
+    socket.write(`
+        {
+           ${dataEnums.login},
+           ${users.users[username] == undefined ? 0 : 1}
+        }
+    `)
+
     if (!users.users[username]) {
         
         users.users[username] = new users.User(username)
     }
-    
-    socket.write(`
-        {
-           ${dataEnums.haveDuplicatedUsernames},
-           ${users.users[username] == undefined ? 0 : 1},
-        }
-    `)
 }
 
 function sendRoomList(socket) {
@@ -31,7 +30,7 @@ function sendRoomList(socket) {
     socket.write(`
         {
             ${dataEnums.sendRoomList},
-            ${roomList.getRoomList()}
+            ${rooms.getRoomList()}
         }
     `)
 }
