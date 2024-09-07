@@ -1,3 +1,4 @@
+require "env"
 require "states/menu"
 require "states/login"
 require "states/rooms"
@@ -8,7 +9,7 @@ gameStates = {
     ["rooms"] = drawRooms,
 }
 
-local currentGameState = "menu"
+currentGameState = "menu"
 
 function setGameState(gameState)
 
