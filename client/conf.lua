@@ -1,7 +1,7 @@
-function love.conf(program)
+function love.conf(game)
 
-    program.title          = "Geografic Wars"
-    program.console        = true
-    program.window.width   = 1280
-    program.window.height  = 720
+    game.title = "Geografic Attack"
+    game.console = true
+    game.window.width = 1280
+    game.window.height = 720
 end

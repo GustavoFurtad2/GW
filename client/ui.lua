@@ -17,12 +17,17 @@ function Gui(x, y)
 
             text = text,
 
+            visible = true,
             textSize = textSize
         })
 
         local textLabel = gui.elements[#gui.elements]
 
         function textLabel:draw()
+
+            if not self.visible then
+                return
+            end
 
             setFontSize(self.textSize)
             love.graphics.print(self.text, gui.x + self.x, gui.y + self.y)
@@ -45,6 +50,9 @@ function Gui(x, y)
 
             action = action,
 
+            visible = true,
+            showBox = false,
+
             textSize = textSize
         })
 
@@ -52,12 +60,21 @@ function Gui(x, y)
 
         function textButton:draw()
 
+            if not self.visible then
+                return
+            end
+            
             local mouseX, mouseY = love.mouse.getPosition()
 
             setFontSize(self.textSize)
 
             if mouseX >= gui.x + self.x and mouseX <= gui.x + self.x + self.w and mouseY >= gui.y + self.y and mouseY <= gui.y + self.y + self.h then
                 love.graphics.setColor(1, 1, 0)
+            end
+
+            if self.showBox then
+
+                love.graphics.rectangle("line", gui.x + self.x, gui.y + self.y, self.w, self.h)
             end
 
             love.graphics.print(self.text, gui.x + self.x, gui.y + self.y)
