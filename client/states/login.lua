@@ -1,5 +1,6 @@
 require "ui"
 require "font"
+require "network"
 
 local currentGameState = "login"
 
@@ -19,15 +20,29 @@ function typemode()
     isTyping = not isTyping
 end
 
-function changeState()
+function resetTextBox()
 
-    currentGameState = "rooms"
+    errorLabel.visible = false
+    enter.visible = true
+    textBox.text = ""
+    textBox.visible = true
+    isTyping = true
 end
 
-local textBox = login:textButton("", 80, 320, 335, 600, 80, typemode)
+textBox = login:textButton("", 80, 320, 335, 600, 80, typemode)
 textBox.showBox = true
 
-local enter = login:textButton("Next", 60, 780, 420, 140, 60, changeState)
+function changeState()
+
+    loginUser(textBox.text)
+end
+
+
+errorLabel = login:textButton("Nome sendo utilizado", 60, 320, 335, 600, 80, resetTextBox)
+errorLabel.showBox = true
+errorLabel.visible = false
+
+enter = login:textButton("Next", 60, 780, 420, 140, 60, changeState)
 enter.showBox = true
 enter.visible = false
 
