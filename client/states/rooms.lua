@@ -29,8 +29,16 @@ end
 
 local currentGameState = "rooms"
 
-for k, v in next, rooms do
-    roomsGui:textButton(v.roomName, 80, 50, 90 + (k - 1) * 90, 200, 80, play)
+function updateRooms(data)
+
+    for k, v in next, data[2] do
+
+        createRoom(v[1], k, v[2], 1, 1)
+    end
+
+    for k, v in next, rooms do
+        roomsGui:textButton(v.roomName, 80, 50, 90 + (k - 1) * 90, 200, 80, play)
+    end
 end
 
 function drawRooms()
