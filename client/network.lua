@@ -1,4 +1,5 @@
 require "client"
+require "states/rooms"
 
 local socket = require("socket")
 local tcp = socket.tcp()
@@ -62,7 +63,13 @@ function processReceivedData(data)
             textBox.visible = false
             errorLabel.visible = true
         end
+
+    elseif data[1] == dataEnums["roomList"] then
+
+        updateRooms(data)
     end
+    
+    receivedData = ""
 end
 
 function loginUser(username)
