@@ -12,6 +12,7 @@ end
 
 function love.draw()
 
+    networkGui:draw()
     drawGame()
 end
 
