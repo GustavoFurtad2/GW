@@ -1,3 +1,4 @@
+require "ui"
 require "client"
 require "states/rooms"
 
@@ -11,6 +12,15 @@ local dataEnums = {
     ["login"] = 1,
     ["roomList"] = 2
 }
+
+networkGui = Gui(0, 0)
+
+local function warn(errorMessage)
+    networkGui:textButton(errorMessage, 30, 5, 5, 1280, 720, function()
+        love.window.close()
+        tcp:close()
+    end)
+end
 
 username = ""
 
@@ -34,11 +44,14 @@ end
 function update()
 
     local data, err, partial = tcp:receive("*a")
+
     if data or (partial and partial ~= "") then
 
         if data then
+
             processReceivedData(data)
         elseif partial then
+
             receivedData = receivedData .. partial
             processReceivedData(receivedData)
         end
@@ -52,8 +65,17 @@ function processReceivedData(data)
 
     print("Received data: " .. data)
 
-    data = load("return " .. data)()
-    if data[1] == dataEnums["login"] then
+    local sucess = pcall(function()
+        data = load("return " .. data)()
+    end)
+
+    if not sucess then
+        warn("Lua Table inválida, por favor contatar Furto sobre erro")
+    end
+
+    local eventName = data[1]
+
+    if eventName == dataEnums["login"] then
 
         if data[2] == 0 then
             updateLogin(data)
@@ -64,7 +86,7 @@ function processReceivedData(data)
             errorLabel.visible = true
         end
 
-    elseif data[1] == dataEnums["roomList"] then
+    elseif eventName == dataEnums["roomList"] then
 
         updateRooms(data)
     end
