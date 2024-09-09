@@ -27,10 +27,26 @@ function sendLoginStatus(socket, data) {
 
 function sendRoomList(socket) {
 
+    let roomList = ""
+
+    rooms.getRoomList().forEach(room => {
+
+        roomList += `
+          {
+             "${room.roomName}",
+             "${room.roomHoster}",
+             ${room.players},
+             ${room.maxPlayers}
+          },
+        `
+    })
+
     socket.write(`
         {
             ${dataEnums.sendRoomList},
-            ${rooms.getRoomList()}
+            {
+                ${roomList}
+            }
         }
     `)
 }
@@ -45,12 +61,13 @@ const server = net.createServer(
             console.log("Data received" + dataString)
 
             const data = JSON.parse(dataString)
+            const eventName = data[0]
 
-            if (data[0] == dataEnums.login) {
+            if (eventName == dataEnums.login) {
 
                 sendLoginStatus(socket, data)
             }
-            else if (data[0] == dataEnums.sendRoomList) {
+            else if (eventName == dataEnums.sendRoomList) {
 
                 sendRoomList(socket)
             }
