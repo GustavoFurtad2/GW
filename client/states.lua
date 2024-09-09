@@ -1,4 +1,5 @@
 require "env"
+require "network"
 require "states/menu"
 require "states/login"
 require "states/rooms"
@@ -22,6 +23,7 @@ function love.mousepressed(x, y, button)
 
         menu:button(x, y)
         login:button(x, y)
+        networkGui:button(x, y)
     end
 end
 
