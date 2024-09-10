@@ -1,1 +1,2 @@
+playerName = ""
 currentGameState = "menu"
