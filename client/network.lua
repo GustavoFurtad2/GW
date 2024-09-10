@@ -22,8 +22,6 @@ local function warn(errorMessage)
     end)
 end
 
-username = ""
-
 tcp:settimeout(0)
 function connect()
 
@@ -78,6 +76,7 @@ function processReceivedData(data)
     if eventName == dataEnums["login"] then
 
         if data[2] == 0 then
+
             updateLogin(data)
             requestRoomList()
         else
@@ -96,6 +95,7 @@ end
 
 function loginUser(username)
 
+    playerName = username
     tcp:send(string.format([[
         [
             %s,
