@@ -3,11 +3,13 @@ require "network"
 require "states/menu"
 require "states/login"
 require "states/rooms"
+require "states/roomCreation"
 
 gameStates = {
     ["menu"] = drawMenu,
     ["login"] = drawLogin,
     ["rooms"] = drawRooms,
+    ["roomCreation"] = drawRoomCreation
 }
 
 currentGameState = "menu"
@@ -21,8 +23,20 @@ function love.mousepressed(x, y, button)
 
     if button == 1 then
 
-        menu:button(x, y)
-        login:button(x, y)
+        if currentGameState == "menu"then
+
+            menu:button(x, y)
+        elseif currentGameState == "login" then
+
+            login:button(x, y)
+        elseif currentGameState == "rooms" then
+
+            roomsGui:button(x, y)
+        elseif currentGameState == "roomCreation" then
+
+            roomCreation:button(x, y)
+        end
+
         networkGui:button(x, y)
     end
 end
