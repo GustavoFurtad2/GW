@@ -9,7 +9,7 @@ function setFontSize(size)
 
     if not fontSizes[size] then
 
-        fontSizes[size] = love.graphics.newFont("assets/arial.ttf", size)
+        fontSizes[size] = love.graphics.newFont("arial.ttf", size)
         love.graphics.setFont(fontSizes[size])
     else
         love.graphics.setFont(fontSizes[size])
