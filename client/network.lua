@@ -1,5 +1,6 @@
 require "ui"
 require "client"
+require "encode"
 require "states/rooms"
 
 local socket = require("socket")
@@ -32,11 +33,11 @@ end
 
 function requestRoomList()
 
-    tcp:send(string.format([[
+    tcp:send(encode(string.format([[
         [
             %s
         ]
-    ]], dataEnums.roomList))
+    ]], dataEnums.roomList)))
 end
 
 function update()
@@ -96,12 +97,12 @@ end
 function loginUser(username)
 
     playerName = username
-    tcp:send(string.format([[
+    tcp:send(encode(string.format([[
         [
             %s,
             "%s"
         ]
-    ]], dataEnums.login, username))
+    ]], dataEnums.login, username)))
 end
 
 function love.quit()
