@@ -2,7 +2,7 @@ require "ui"
 require "font"
 
 rooms = {}
-roomsGui = Gui()
+roomsGui = Interface:new()
 
 function createRoom(roomName, roomID, owner, players, maxPlayers)
 
@@ -27,15 +27,25 @@ function closeRoom(roomID)
     table.remove(rooms, roomID)
 end
 
-tableText  = roomsGui:textLabel("Owner          Room Name         Players           MaxPlayers", 40, 50, 90)
-roomCreate = roomsGui:textButton("Create Room", 50, 80, 620, 300, 70, function()
+roomCreate = roomsGui:textButton("Create Room", 50, 80, 620, 310, 65, function()
 
     currentGameState = "roomCreation"
 end)
 
-roomCreate.showBox = true
+local back = roomsGui:textButton("Back", 50, 1050, 620, 145, 65, function()
+
+    currentGameState = "login"
+end)
+
+roomCreate.showBorder = true
+back.showBorder = true
 
 local currentGameState = "rooms"
+
+local function abbreviate(string, maxChars)
+
+    return string:len() >= maxChars and string:sub(1, maxChars) .. "..." or string
+end
 
 function updateRooms(data)
 
@@ -45,8 +55,12 @@ function updateRooms(data)
     end
 
     for k, v in next, rooms do
-        local roomButton = roomsGui:textButton(v.owner .. "  " .. v.roomName .. "  " .. v.players .. "  " .. v.maxPlayers, 80, 50, 180 + (k - 1) * 90, 1000, 80, play)
-        roomButton.showBox = true
+
+        local factorY = 80 + (k - 1) * 80
+
+        local roomButton = roomsGui:textButton(abbreviate(v.owner, 26) .. string.format("(%s / %s)", v.players, v.maxPlayers), 35, 50, factorY, 1000, 65, play)
+
+        roomButton.showBorder = true
     end
 end
 
