@@ -4,7 +4,7 @@ require "network"
 
 local currentGameState = "login"
 
-login = Gui()
+login = Interface:new()
 
 local isTyping = false
 
@@ -30,7 +30,7 @@ function resetTextBox()
 end
 
 textBox = login:textButton("", 80, 320, 335, 600, 80, typemode)
-textBox.showBox = true
+textBox.showBorder = true
 
 function changeState()
 
@@ -39,11 +39,11 @@ end
 
 
 errorLabel = login:textButton("Nome sendo utilizado", 60, 320, 335, 600, 80, resetTextBox)
-errorLabel.showBox = true
+errorLabel.showBorder = true
 errorLabel.visible = false
 
 enter = login:textButton("Next", 60, 780, 420, 140, 60, changeState)
-enter.showBox = true
+enter.showBorder = true
 enter.visible = false
 
 function type(key)
