@@ -3,7 +3,7 @@ require "font"
 
 local currentGameState = "menu"
 
-menu = Gui()
+menu = Interface:new()
 local text = menu:textLabel("Geografic Wars", 80, 25, 25)
 
 function play()
@@ -11,8 +11,11 @@ function play()
     currentGameState = "login"
 end
 
-local play = menu:textButton("Play", 80, 25, 250, 200, 80, play)
-local exit = menu:textButton("Exit", 80, 25, 335, 200, 80, love.window.close)
+local play = menu:textButton("Play", 70, 25, 250, 200, 75, play)
+local exit = menu:textButton("Exit", 70, 25, 335, 200, 75, love.window.close)
+
+play.showBorder = true
+exit.showBorder = true
 
 function drawMenu()
 
