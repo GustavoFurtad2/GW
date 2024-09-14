@@ -4,22 +4,31 @@ require "font"
 
 local currentGameState = "roomCreation"
 
-roomCreation = Gui()
+roomCreation = Interface:new()
 
 function play()
 
     currentGameState = "login"
 end
 
-roomName = roomCreation:textLabel("", 80, 20, 155)
-local roomMaxPlayers = roomCreation:textLabel("Room Max Players", 80, 20, 225)
-local fivePlayers = roomCreation:textButton("5", 80, 780, 225, 100, 90, function()
+roomName = roomCreation:textLabel("", 40, 20, 155)
+local roomMaxPlayers = roomCreation:textLabel("Room Max Players", 40, 20, 225)
+local players = roomCreation:comboBox({
+    {text = "2"},
+    {text = "3"},
+    {text = "4"},
+    {text = "5"},
+    {text = "6"},
+    {text = "7"},
+    {text = "8"},
+}, 40, 380, 230, 45)
+
+local create = roomCreation:textButton("Create", 50, 1045, 620, 165, 65, function()
+
 end)
 
-fivePlayers.showBox = true
-local tenPlayers = roomCreation:textButton("10", 80, 900, 225, 100, 90, function()
-end)
-tenPlayers.showBox = true
+create.showBorder = true
+
 
 
 function drawRoomCreation()
