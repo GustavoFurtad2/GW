@@ -14,7 +14,7 @@ local dataEnums = {
     ["roomList"] = 2
 }
 
-networkGui = Gui(0, 0)
+networkGui = Interface:new()
 
 local function warn(errorMessage)
     networkGui:textButton(errorMessage, 30, 5, 5, 1280, 720, function()
