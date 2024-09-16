@@ -7,9 +7,11 @@ class User {
 
     inARoom = false
 
-    constructor(username) {
+    constructor(username, ip, socket) {
 
         this.username = username
+        this.socket = socket
+        this.ip = ip
     }
 
 }
