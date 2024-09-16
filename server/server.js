@@ -6,22 +6,44 @@ let users = require("./users")
 const dataEnums = {
     "login": 1,
     "sendRoomList": 2,
+    "logout": 3
 }
 
 function sendLoginStatus(socket, data) {
 
-    let username = data[1]
+    const username = data[1]
+    let clientIP = socket.remoteAddress
+
+    let loginAllowed = users.users[username] == undefined ? 1 : 0
+
+    if (users.users[username] && !users.users[username].onlline && clientIP == users.users[username].ip) {
+
+        loginAllowed = 1
+    }
 
     socket.write(`
         {
            ${dataEnums.login},
-           ${users.users[username] == undefined ? 0 : 1}
+           ${loginAllowed}
         }
     `)
 
     if (!users.users[username]) {
         
-        users.users[username] = new users.User(username)
+        users.users[username] = new users.User(username, socket.remoteAddress, socket)
+    }
+}
+
+function sendLogout(socket, data) {
+
+    const username = data[1]
+    const clientIP = socket.remoteAddress
+
+    if (users.users[username] && clientIP == users.users[username].ip) {
+
+        if (users.users[username].onlline) {
+            delete users.users[username]
+        }
     }
 }
 
@@ -31,14 +53,16 @@ function sendRoomList(socket) {
 
     rooms.getRoomList().forEach(room => {
 
-        roomList += `
-          {
-             "${room.roomName}",
-             "${room.roomHoster}",
-             ${room.players},
-             ${room.maxPlayers}
-          },
-        `
+        if (room.open) {
+            roomList += `
+            {
+                "${room.roomName}",
+                "${room.roomHoster}",
+                ${room.players},
+                ${room.maxPlayers}
+            },
+            `
+        }
     })
 
     socket.write(`
@@ -67,6 +91,10 @@ const server = net.createServer(
 
                 sendLoginStatus(socket, data)
             }
+            else if (eventName == dataEnums.logout) {
+
+                sendLogout(socket, data)
+            }
             else if (eventName == dataEnums.sendRoomList) {
 
                 sendRoomList(socket)
@@ -76,6 +104,13 @@ const server = net.createServer(
         socket.on("end", () => {
 
             console.log("Client disconnected")
+            for (let user in users.users) {
+
+                if (socket.remoteAddress == user.ip) {
+                    user.onlline = false
+                    break
+                }
+            }
         })
 
         socket.on("error", (error) => {
