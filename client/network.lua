@@ -11,7 +11,9 @@ local receivedData = ""
 local dataEnums = {
 
     ["login"] = 1,
-    ["roomList"] = 2
+    ["roomList"] = 2,
+    ["logout"] = 3,
+    ["createRoom"] = 4
 }
 
 networkGui = Interface:new()
@@ -31,6 +33,16 @@ function connect()
     print("Conectado!")
 end
 
+function logout()
+
+    tcp:send(encode(string.format([[
+        [
+            %s,
+            "%s"
+        ]
+    ]], dataEnums.logout, username)))
+end
+
 function requestRoomList()
 
     tcp:send(encode(string.format([[
@@ -38,6 +50,16 @@ function requestRoomList()
             %s
         ]
     ]], dataEnums.roomList)))
+end
+
+function createRoom(maxPlayers)
+
+    tcp:send(encode(string.format([[
+        [
+            %s,
+            %s
+        ]
+    ]], dataEnums.createRoom, maxPlayers)))
 end
 
 function update()
@@ -76,7 +98,7 @@ function processReceivedData(data)
 
     if eventName == dataEnums["login"] then
 
-        if data[2] == 0 then
+        if data[2] == 1 then
 
             updateLogin(data)
             requestRoomList()
@@ -95,6 +117,11 @@ function processReceivedData(data)
 end
 
 function loginUser(username)
+
+    if playerName ~= "" then
+        
+        logout()
+    end
 
     playerName = username
     tcp:send(encode(string.format([[
