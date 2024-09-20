@@ -21,9 +21,9 @@ end
 
 function love.mousepressed(x, y, button)
 
-    if button == 1 then
+    if button == 1 and not connectionError then
 
-        if currentGameState == "menu"then
+        if currentGameState == "menu" then
 
             menu:button(x, y)
         elseif currentGameState == "login" then
@@ -43,5 +43,7 @@ end
 
 function drawGame()
 
-    currentGameState = gameStates[currentGameState]()
+    if not connectionError then
+        currentGameState = gameStates[currentGameState]()
+    end
 end
