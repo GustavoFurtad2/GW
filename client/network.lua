@@ -18,6 +18,11 @@ local dataEnums = {
 
 networkGui = Interface:new()
 
+connectionError = false
+
+local errorText = networkGui:textLabel("Tentando se conectar com servidor...", 40, 10, 10)
+errorText.visible = false 
+
 local function warn(errorMessage)
     networkGui:textButton(errorMessage, 30, 5, 5, 1280, 720, function()
         love.window.close()
@@ -29,8 +34,6 @@ tcp:settimeout(0)
 function connect()
 
     tcp:connect("127.0.0.1", 8081)
-
-    print("Conectado!")
 end
 
 function logout()
@@ -65,7 +68,7 @@ end
 function update()
 
     local data, err, partial = tcp:receive("*a")
-
+        
     if data or (partial and partial ~= "") then
 
         if data then
@@ -78,7 +81,16 @@ function update()
         end
 
     elseif err ~= "timeout" then
+
+        connectionError = true
+        errorText.visible = true
+        errorLabel.visible = true
+        connect()
         print("Connection closed or error:", err)
+    elseif err == "timeout" then
+
+        connectionError = false
+        errorText.visible = false
     end
 end
 
