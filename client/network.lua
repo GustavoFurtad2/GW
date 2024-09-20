@@ -84,7 +84,6 @@ function update()
 
         connectionError = true
         errorText.visible = true
-        errorLabel.visible = true
         connect()
         print("Connection closed or error:", err)
     elseif err == "timeout" then
