@@ -55,7 +55,7 @@ function requestRoomList()
     ]], dataEnums.roomList)))
 end
 
-function createRoom(maxPlayers)
+function requestCreateRoom(maxPlayers)
 
     tcp:send(encode(string.format([[
         [
@@ -102,7 +102,7 @@ function processReceivedData(data)
     end)
 
     if not sucess then
-        warn("Lua Table inválida, por favor contatar Furto sobre erro")
+        warn("Lua Table inválida")
     end
 
     local eventName = data[1]
