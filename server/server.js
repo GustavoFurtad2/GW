@@ -6,7 +6,8 @@ let users = require("./users")
 const dataEnums = {
     "login": 1,
     "sendRoomList": 2,
-    "logout": 3
+    "logout": 3,
+    "createRoom": 4
 }
 
 function sendLoginStatus(socket, data) {
@@ -84,20 +85,25 @@ const server = net.createServer(
 
             console.log("Data received" + dataString)
 
-            const data = JSON.parse(dataString)
-            const eventName = data[0]
+            try {
 
-            if (eventName == dataEnums.login) {
+                const data = JSON.parse(dataString)
+                const eventName = data[0]
 
-                sendLoginStatus(socket, data)
+                if (eventName == dataEnums.login) {
+
+                    sendLoginStatus(socket, data)
+                }
+                else if (eventName == dataEnums.logout) {
+
+                    sendLogout(socket, data)
+                }
+                else if (eventName == dataEnums.sendRoomList) {
+
+                    sendRoomList(socket)
+                }
             }
-            else if (eventName == dataEnums.logout) {
-
-                sendLogout(socket, data)
-            }
-            else if (eventName == dataEnums.sendRoomList) {
-
-                sendRoomList(socket)
+            catch(e) {
             }
         })
 
