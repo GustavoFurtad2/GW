@@ -128,6 +128,6 @@ const server = net.createServer(
     }
 )
 
-server.listen(8081, () => {
+server.listen(1024, () => {
     console.log("Server listening")
 })
