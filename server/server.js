@@ -104,6 +104,8 @@ const server = net.createServer(
                 }
             }
             catch(e) {
+
+                console.log("fail send data or parse received data")
             }
         })
 
