@@ -87,7 +87,7 @@ const server = net.createServer(
 
             try {
 
-                const data = JSON.parse(dataString)
+                const data = dataString.startsWith("{") ? JSON.parse(dataString) : null
                 const eventName = data[0]
 
                 if (eventName == dataEnums.login) {
