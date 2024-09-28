@@ -1,5 +1,6 @@
 const net = require("net")
 const rooms = require("./rooms")
+const encode = require("./encode")
 
 let users = require("./users")
 
@@ -22,12 +23,12 @@ function sendLoginStatus(socket, data) {
         loginAllowed = 1
     }
 
-    socket.write(`
+    socket.write(encode.removeSpaces(`
         {
            ${dataEnums.login},
            ${loginAllowed}
         }
-    `)
+    `))
 
     if (!users.users[username]) {
         
@@ -66,14 +67,14 @@ function sendRoomList(socket) {
         }
     })
 
-    socket.write(`
+    socket.write(encode.removeSpaces(`
         {
             ${dataEnums.sendRoomList},
             {
                 ${roomList}
             }
         }
-    `)
+    `))
 }
 
 const server = net.createServer(
@@ -87,7 +88,7 @@ const server = net.createServer(
 
             try {
 
-                const data = dataString.startsWith("{") ? JSON.parse(dataString) : null
+                const data = JSON.parse(dataString)
                 const eventName = data[0]
 
                 if (eventName == dataEnums.login) {
